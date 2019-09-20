@@ -1,3 +1,11 @@
+:root {
+  --navbar-height: 2rem;
+}
+
+* {
+  box-sizing: border-box;
+}
+
 .App {
   text-align: center;
 }
@@ -30,4 +38,132 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+.navbar {
+  display: flex;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: var(--navbar-height);
+  background: black;
+  color: white;
+  justify-content: center;
+  align-items: center;
+}
+
+.container {
+  display: flex;
+  width: 85%;
+  justify-content: space-between;
+  align-items: center;
+}
+
+a {
+  cursor: pointer;
+  text-decoration: none;
+  color: white;
+}
+
+.add-job-container form {
+  width: 100%;
+}
+
+.dashboard-container {
+  margin-top: var(--navbar-height);
+}
+.login-container {
+  display: flex;
+  margin-top: var(--navbar-height);
+  height: calc(100vh - var(--navbar-height));
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+}
+
+.job-details {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.add-job-container label.form-control {
+  width: 5rem;
+}
+
+.add-job-container input.form-control,
+.add-job-container select.form-control {
+  width: 15rem;
+}
+
+.add-job-container .form-group {
+}
+
+.job-details-row {
+  width: 85%;
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: center;
+}
+
+.add-job-container {
+  padding: 1rem;
+  margin: var(--navbar-height) auto 0 auto;
+  width: 85%;
+}
+
+.cover-letter-container {
+  padding: 1rem;
+  width: 75%;
+  margin: auto;
+  height: 30rem;
+}
+
+.cover-letter-container textarea {
+  width: 100%;
+  height: 100%;
+}
+
+.login-container form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 35vh;
+  border: 1px solid #333;
+}
+.login-container .form-group {
+  width: 100%;
+}
+.form-group {
+  display: flex;
+  margin: 0.5rem;
+  padding: 0.3rem;
+}
+
+.label.form-control {
+  padding: 0.3rem;
+  text-align: right;
+  margin: 0.3rem;
+}
+
+.login-container label.form-control {
+  width: 5rem;
+  padding: 0.3rem;
+  text-align: right;
+  margin: 0.3rem;
+}
+
+.login-container input.form-control {
+  width: 10rem;
+}
+
+.btn {
+  border-radius: 5px;
+  background: #0000e6;
+  color: white;
+  padding: 0.5rem 1.5rem;
+  cursor: pointer;
 }

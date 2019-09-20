@@ -9,19 +9,22 @@ const auth = require('../middleware/auth');
 router.use(express.json());
 
 router.post('/', (req, res) => {
+  console.log('Loggin in');
   const { login, password } = req.body;
+  console.log(`${login} ${password}`);
   User.findOne({ login }).then(validUser => {
     bcrypt
       .compare(password, validUser.password)
       .then(isMatch => {
-        if (!isMatch) res.status(401).json({ msg: 'Incorrect password' });
+        if (!isMatch)
+          return res.status(401).json({ msg: 'Incorrect password' });
         const tokenContent = {
           user: {
             id: validUser.id
           }
         };
         const token = jwt.sign(tokenContent, config.get('jwtSecret'));
-        res.json(token);
+        return res.json(token);
       })
       .catch(err => console.error(err));
   });
