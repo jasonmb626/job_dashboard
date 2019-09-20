@@ -1,0 +1,4 @@
+{
+  "mongoURI": "mongodb+srv://jason:jason123@cluster0-qmira.mongodb.net/jobsgi?retryWrites=true&w=majority",
+  "jwtSecret": "mysecret"
+}
