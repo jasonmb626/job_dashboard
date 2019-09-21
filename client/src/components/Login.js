@@ -20,11 +20,10 @@ class Login extends Component {
 
   onSubmit = e => {
     e.preventDefault();
-    this.props.login(this.state);
+    this.props.login(this.state.login, this.state.password);
   };
 
   render() {
-    console.log(this.props.auth.isAuthenticated);
     return this.props.auth.isAuthenticated ? (
       <Redirect to='/' />
     ) : (
@@ -40,7 +39,7 @@ class Login extends Component {
               id='login'
               className='form-control'
               onChange={this.onChange}
-              value={this.login}
+              value={this.state.login}
             />
           </div>
           <div className='form-group'>
@@ -53,7 +52,7 @@ class Login extends Component {
               id='password'
               className='form-control'
               onChange={this.onChange}
-              value={this.password}
+              value={this.state.password}
             />
           </div>
           <input type='submit' className='btn' value='Login' />
@@ -64,7 +63,8 @@ class Login extends Component {
 }
 
 const mapStateToProps = state => ({
-  auth: state.auth
+  auth: state.auth,
+  company: state.company
 });
 
 export default connect(

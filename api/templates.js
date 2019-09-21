@@ -12,8 +12,15 @@ router.get('/', auth, (req, res) => {
     .catch(err => res.status(500).json({ msg: err }));
 });
 
-router.get('/:name', auth, (req, res) => {
+router.get('/:id', auth, (req, res) => {
   Template.findOne({ name: req.params.name })
+    .then(template => res.json(template))
+    .catch(err => res.status(500).json({ msg: err }));
+});
+
+router.post('/:id', auth, (req, res) => {
+  console.log(req.body.content);
+  Template.findByIdAndUpdate(req.params.id, { content: req.body.content })
     .then(template => res.json(template))
     .catch(err => res.status(500).json({ msg: err }));
 });

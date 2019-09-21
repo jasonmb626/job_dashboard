@@ -8,14 +8,13 @@ import {
 } from './types';
 
 const setToken = token => {
-  if (token) console.log(`token: ${token}`);
   if (token) axios.defaults.headers.common['x-auth-token'] = token;
   else delete axios.defaults.headers.common['x-auth-token'];
 };
 
-export const login = login_info => dispatch => {
+export const login = (login, password) => dispatch => {
   axios
-    .post('/api/auth', login_info)
+    .post('/api/auth', { login, password })
     .then(res => {
       dispatch({
         type: LOGIN_SUCCESS,
@@ -23,7 +22,12 @@ export const login = login_info => dispatch => {
       });
       dispatch(loadUser());
     })
-    .catch(err => console.error(err));
+    .catch(err =>
+      dispatch({
+        type: LOGIN_FAILURE,
+        payload: err.message
+      })
+    );
 };
 
 export const logout = () => {
@@ -33,7 +37,6 @@ export const logout = () => {
 };
 
 export const loadUser = () => dispatch => {
-  console.log('Loading user');
   const token = localStorage.token;
   if (token) {
     setToken(localStorage.token);
@@ -46,7 +49,6 @@ export const loadUser = () => dispatch => {
         })
       )
       .catch(err => {
-        console.error(err);
         dispatch({
           type: AUTH_ERROR
         });

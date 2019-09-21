@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 
 class Dashboard extends Component {
   static propTypes = {
-    prop: PropTypes
+    auth: PropTypes.object.isRequired
   };
 
   render() {
@@ -12,7 +12,6 @@ class Dashboard extends Component {
       <div className='dashboard-container'>
         <button
           onClick={() => {
-            console.log('clicked');
             this.props.history.push('/addJob');
           }}
           className='btn'

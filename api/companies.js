@@ -12,6 +12,14 @@ router.get('/', auth, (req, res) => {
     .catch(err => res.status(500).json({ msg: err }));
 });
 
+router.get('/string/:id', auth, (req, res) => {
+  Company.find({
+    name: new RegExp(req.params.id, 'i')
+  })
+    .then(companies => res.json(companies))
+    .catch(err => res.status(204));
+});
+
 router.get('/:id', auth, (req, res) => {
   Company.findById(req.params.id)
     .then(company => res.json(company))

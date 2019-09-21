@@ -23,7 +23,10 @@ class Navbar extends Component {
   }
 }
 
-Navbar.propTypes = {};
+Navbar.propTypes = {
+  auth: PropTypes.object.isRequired,
+  logout: PropTypes.func.isRequired
+};
 
 const mapStateToProps = state => ({
   auth: state.auth
