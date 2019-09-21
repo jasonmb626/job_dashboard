@@ -4,15 +4,14 @@ import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Login from './components/Login';
 import Dashboard from './components/Dashboard';
-import AddJob from './components/AddJob';
+import AddEditJob from './components/AddEditJob';
 import { Provider } from 'react-redux';
 import store from './store';
 import { loadUser } from './actions/auth';
-import { useEffect } from 'react';
 import PrivateRoute from './components/PrivateRoute';
 
+store.dispatch(loadUser());
 function App() {
-  useEffect(() => store.dispatch(loadUser()), []);
   return (
     <Provider store={store}>
       <div className='App'>
@@ -20,7 +19,8 @@ function App() {
           <Navbar />
           <Switch>
             <PrivateRoute path='/' exact component={Dashboard} />
-            <PrivateRoute path='/addJob' exact component={AddJob} />
+            <PrivateRoute path='/jobs/new' exact component={AddEditJob} />
+            <PrivateRoute path='/jobs/:id' exact component={AddEditJob} />
             <Route path='/login' component={Login} />
           </Switch>
         </Router>

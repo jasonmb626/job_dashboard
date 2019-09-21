@@ -5,7 +5,7 @@ const JobSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  company_id: {
+  company: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'company',
     required: true
@@ -19,6 +19,10 @@ const JobSchema = new mongoose.Schema({
   follow_up: {
     type: Date,
     default: Date.now() + 3 * 24 * 60 * 60 * 1000
+  },
+  still_open: {
+    type: Boolean,
+    default: true
   },
   history: {
     type: Array

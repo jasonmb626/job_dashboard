@@ -11,7 +11,8 @@ class Login extends Component {
   };
 
   static propTypes = {
-    prop: PropTypes
+    auth: PropTypes.object.isRequired,
+    company: PropTypes.object.isRequired
   };
 
   onChange = e => {
