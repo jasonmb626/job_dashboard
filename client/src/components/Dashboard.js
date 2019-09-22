@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { getJobs } from '../actions/job';
+import { getJobs, getCoverLetter } from '../actions/job';
 import moment from 'moment';
 import Spinner from './Spinner';
 
@@ -13,6 +13,10 @@ class Dashboard extends Component {
 
   onChange = e => {
     this.setState({ [e.target.name]: e.target.checked });
+  };
+
+  downloadCoverLetter = id => {
+    getCoverLetter(id);
   };
 
   componentDidMount() {
@@ -50,6 +54,7 @@ class Dashboard extends Component {
               <th>Company</th>
               <th>Applied</th>
               <th>Follow Up</th>
+              <th>&darr;</th>
             </tr>
           </thead>
           <tbody>
@@ -60,9 +65,14 @@ class Dashboard extends Component {
                     <td>
                       <Link to={`/jobs/${job._id}`}>{job.title}</Link>
                     </td>
-                    <td>{job.company.name}</td>
+                    <td>{job.company_name}</td>
                     <td>{moment(job.date).format('ddd, MMM DD')}</td>
                     <td>{moment(job.follow_up).format('ddd, MMM DD')}</td>
+                    <td>
+                      <button onClick={() => this.downloadCoverLetter(job._id)}>
+                        &darr;
+                      </button>
+                    </td>
                   </tr>
                 )
             )}

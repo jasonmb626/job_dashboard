@@ -42,7 +42,8 @@ export default (state = initialState, action) => {
     case ADD_JOB:
       return {
         ...state,
-        jobs: [...state.jobs, action.payload]
+        jobs: [...state.jobs, action.payload],
+        job: action.payload
       };
     case ADD_ACTION:
       console.log(action.payload);
@@ -78,7 +79,8 @@ export default (state = initialState, action) => {
           ...state.job,
           ...action.payload,
           company_name: action.payload.company.name,
-          follow_up: action.payload.follow_up.slice(0, 10)
+          follow_up:
+            action.payload.follow_up && action.payload.follow_up.slice(0, 10)
         }
       };
     case SET_FIELD:

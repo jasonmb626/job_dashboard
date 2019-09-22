@@ -11,7 +11,8 @@ import {
   addAction,
   editJob,
   getJob,
-  setField
+  setField,
+  getCoverLetter
 } from '../actions/job';
 import Spinner from './Spinner';
 import moment from 'moment';
@@ -64,13 +65,26 @@ class AddEditJob extends Component {
     }
   };
 
-  onSubmit = e => {
+  getCoverLetter = e => {
     e.preventDefault();
-    if (!this.props.match.params.id) this.props.addJob(this.props.job.job);
+    if (this.props.job.job._id === '') {
+      alert('Please save first');
+    } else {
+      getCoverLetter(this.props.job.job._id);
+    }
+  };
+
+  saveJob = e => {
+    e.preventDefault();
+    if (!this.props.job.job._id) this.props.addJob(this.props.job.job);
     else {
       this.props.addAction(this.props.match.params.id, this.state);
       this.props.editJob(this.props.job.job);
     }
+  };
+  onSubmit = e => {
+    e.preventDefault();
+    this.saveJob(e);
     this.props.history.push('/');
   };
 
@@ -166,6 +180,9 @@ class AddEditJob extends Component {
               checked={this.props.job.job.toggle_show_cover_letter}
             />
             <span>Cover Letter Area</span>
+            <button className='btn' onClick={this.getCoverLetter}>
+              Download Coverletter
+            </button>
             <div className='job-details-row mt-1'>
               <span>Followup Date</span>
               <input
@@ -222,7 +239,6 @@ class AddEditJob extends Component {
                     <td>
                       <input
                         list='actions'
-                        name=''
                         onChange={this.internalChange}
                         value={this.state.action}
                         name='action'
@@ -237,7 +253,6 @@ class AddEditJob extends Component {
                     <td className='action-description'>
                       <input
                         type='text'
-                        name=''
                         onChange={this.internalChange}
                         value={this.state.description}
                         name='description'
@@ -247,7 +262,6 @@ class AddEditJob extends Component {
                     <td>
                       <input
                         type='date'
-                        name=''
                         onChange={this.internalChange}
                         value={moment(this.state.date).format('YYYY-MM-DD')}
                         name='date'
@@ -268,7 +282,10 @@ class AddEditJob extends Component {
               </table>
             </div>
             <div className='job-details-row mt-1'>
-              <input type='submit' value='Save' className='btn' />
+              <input type='submit' value='Submit' className='btn' />
+              <button className='btn' onClick={this.saveJob}>
+                Save
+              </button>
               <button
                 className='btn'
                 onClick={() => this.props.history.push('/')}

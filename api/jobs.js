@@ -2,6 +2,7 @@ const express = require('express');
 const Job = require('../models/Job');
 const Company = require('../models/Company');
 const uuid = require('uuid');
+const generatePDF = require('../generatePDF');
 
 const auth = require('../middleware/auth');
 
@@ -16,7 +17,14 @@ router.get('/', auth, (req, res) => {
     .catch(err => res.status(500).json({ msg: err }));
 });
 
-router.get('/:id/cover_letter', auth, (req, res) => {});
+router.get('/:id/cover_letter', async (req, res) => {
+  const job = await Job.findById(req.params.id).catch(err => {
+    console.error(err);
+    res.status(500).json(err);
+  });
+  console.log(`Getting cover letter ${req.params.id}`);
+  generatePDF(job.cover_letter, req.params.id, res);
+});
 
 router.get('/:id', auth, (req, res) => {
   Job.findById(req.params.id)

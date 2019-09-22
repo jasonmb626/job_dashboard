@@ -21,6 +21,7 @@ export const getJobs = () => dispatch => {
 
 export const getJob = id => dispatch => {
   Axios.get(`/api/jobs/${id}`).then(res => {
+    console.log(res.data);
     const jobs = { ...res.data };
     jobs.company_name = jobs.company.name;
     dispatch({
@@ -40,6 +41,31 @@ export const addJob = job => dispatch => {
       payload: res.data
     })
   );
+};
+
+export const getCoverLetter = id => {
+  console.log('Getting cover letter');
+  Axios({
+    url: `/api/jobs/${id}/cover_letter`,
+    method: 'GET',
+    responseType: 'blob' // important
+  }).then(response => {
+    let headers = '';
+    Object.keys(response.headers).forEach(
+      key =>
+        (headers += response.headers[key] === '' ? ' ' : response.headers[key])
+    );
+    const start = headers.indexOf('filename=') + 'filename='.length + 1;
+    const end = headers.indexOf('"', start);
+    const filename = headers.slice(start, end);
+    console.log(`*${start} ${end} ${filename}*`);
+    const url = window.URL.createObjectURL(new Blob([response.data]));
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', filename);
+    document.body.appendChild(link);
+    link.click();
+  });
 };
 
 export const addAction = (id, action) => dispatch => {
