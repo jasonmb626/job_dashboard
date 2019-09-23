@@ -4,20 +4,7 @@ module.exports = generatePDF = async (content, id, res) => {
   try {
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
-    const containerText = `
-        <style>
-            .container {
-                margin: 0.75in;
-            }
-        </style>
-        <body>
-            <div class="container">
-                %CONTENT%
-            </div>
-        </body>`;
-    // await page.setContent(
-    //   containerText.replace('%CONTENT%', content.replace(/\n/g, '<br />'))
-    // );
+    
     await page.setContent(content.replace(/\n/g, '<br />'));
     await page.emulateMedia('screen');
     await page.pdf({

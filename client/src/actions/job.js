@@ -23,7 +23,6 @@ export const getJob = id => dispatch => {
   Axios.get(`/api/jobs/${id}`).then(res => {
     console.log(res.data);
     const jobs = { ...res.data };
-    jobs.company_name = jobs.company.name;
     dispatch({
       type: GET_JOB,
       payload: jobs

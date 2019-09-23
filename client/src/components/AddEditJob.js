@@ -25,7 +25,6 @@ class AddEditJob extends Component {
   };
   componentDidMount = () => {
     setTimeout(() => this.props.getTemplates(), 1000);
-    console.log(this.props.match.params.id);
     if (this.props.match.params.id) {
       this.props.getJob(this.props.match.params.id);
     }
@@ -41,8 +40,8 @@ class AddEditJob extends Component {
   };
 
   externalChange = e => {
-    if (e.target.name === 'toggle_show_cover_letter') {
-      this.props.setField('toggle_show_cover_letter', e.target.checked);
+    if (e.target.type === 'checkbox') {
+      this.props.setField(e.target.name, e.target.checked);
     } else if (e.target.name === 'company_id') {
       this.props.setField(
         'company_name',
@@ -82,8 +81,14 @@ class AddEditJob extends Component {
       this.props.editJob(this.props.job.job);
     }
   };
+
   onSubmit = e => {
     e.preventDefault();
+    if (!this.props.job.job.finished_applying) {
+      if (window.confirm('Mark job applied?')) {
+        this.props.setField('finished_applying', true);
+      }
+    }
     this.saveJob(e);
     this.props.history.push('/');
   };
@@ -282,7 +287,19 @@ class AddEditJob extends Component {
               </table>
             </div>
             <div className='job-details-row mt-1'>
-              <input type='submit' value='Submit' className='btn' />
+              <div className='form-group'>
+                <label htmlFor='finished_applying' className='form-control'>
+                  Finished Applying?
+                </label>
+                <input
+                  type='checkbox'
+                  name='finished_applying'
+                  id='finished_applying'
+                  checked={this.props.job.job.finished_applying}
+                  onChange={this.externalChange}
+                />
+              </div>
+              <input type='submit' value='Save & Return' className='btn' />
               <button className='btn' onClick={this.saveJob}>
                 Save
               </button>

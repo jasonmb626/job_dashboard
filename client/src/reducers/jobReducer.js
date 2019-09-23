@@ -13,6 +13,7 @@ const initialState = {
   jobs: [],
   job: {
     _id: '',
+    finished_applying: false,
     title: '',
     company_name: '',
     where_listed: '',
@@ -78,7 +79,6 @@ export default (state = initialState, action) => {
         job: {
           ...state.job,
           ...action.payload,
-          company_name: action.payload.company.name,
           follow_up:
             action.payload.follow_up && action.payload.follow_up.slice(0, 10)
         }
