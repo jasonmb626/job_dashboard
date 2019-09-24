@@ -16,15 +16,22 @@ const JobSchema = new mongoose.Schema({
   cover_letter: {
     type: String
   },
+  finished_applying: {
+    type: Boolean,
+    default: false
+  },
   follow_up: {
     type: Date,
     default: Date.now() + 3 * 24 * 60 * 60 * 1000
+  },
+  hiring_managers: {
+    type: Array
   },
   still_open: {
     type: Boolean,
     default: true
   },
-  history: {
+  actions: {
     type: Array
   },
   date: {

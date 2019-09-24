@@ -67,7 +67,11 @@ class Dashboard extends Component {
                     </td>
                     <td>{job.company_name}</td>
                     <td>{moment(job.date).format('ddd, MMM DD')}</td>
-                    <td>{moment(job.follow_up).format('ddd, MMM DD')}</td>
+                    <td>
+                      {moment(job.follow_up)
+                        .add(1, 'day')
+                        .format('ddd, MMM DD')}
+                    </td>
                     <td>
                       <button onClick={() => this.downloadCoverLetter(job._id)}>
                         &darr;

@@ -23,14 +23,19 @@ router.get('/', auth, (req, res) => {
       });
       res.json(revisedJobs);
     })
-    .catch(err => res.status(500).json({ msg: err }));
+    .catch(err => {
+      console.error(err);
+      res.status(500).json({ msg: err });
+    });
 });
 
 router.get('/:id/cover_letter', async (req, res) => {
-  const job = await Job.findById(req.params.id).catch(err => {
-    console.error(err);
-    res.status(500).json(err);
-  });
+  const job = await Job.findById(req.params.id)
+    .exec()
+    .catch(err => {
+      console.error(err);
+      res.status(500).json(err);
+    });
   console.log(`Getting cover letter ${req.params.id}`);
   generatePDF(job.cover_letter, req.params.id, res);
 });
@@ -38,6 +43,7 @@ router.get('/:id/cover_letter', async (req, res) => {
 router.get('/:id', auth, (req, res) => {
   Job.findById(req.params.id)
     .populate('company', 'name -_id')
+    .exec()
     .then(job => {
       res.json({
         ...job._doc,
@@ -71,11 +77,13 @@ router.post(
       title,
       company_name,
       where_listed,
+      actions,
       cover_letter,
-      follow_up
+      follow_up,
+      hiring_managers
     } = req.body;
     let { company_id } = req.body;
-    let company = await Company.findOne({ name: company_name });
+    let company = await Company.findOne({ name: company_name }).exec();
     if (!company) {
       const newCompany = new Company({
         name: company_name
@@ -88,22 +96,28 @@ router.post(
     console.log(company_id);
     const job = new Job({
       title,
+      finished_applying,
       company: company_id,
       where_listed,
+      actions,
       cover_letter,
-      follow_up
+      follow_up,
+      hiring_managers
     });
     if (finished_applying)
-      job.history.unshift({
+      job.actions.unshift({
         _id: uuid.v4(),
         action: 'Applied',
         description: 'Applied to job',
         date: Date.now()
       });
-    console.log(job);
     job
       .save()
-      .then(newJob => res.status(201).json(newJob))
+      .then(newJob => {
+        revisedJob = { ...newJob._doc, company_name };
+        console.log(revisedJob);
+        return res.status(201).json(revisedJob);
+      })
       .catch(err => {
         console.error(err);
         res.status(500).json({ msg: 'Server Error' });
@@ -128,6 +142,7 @@ router.post(
     ]
   ],
   async (req, res) => {
+    console.log('In post:id');
     const {
       finished_applying,
       title,
@@ -135,17 +150,21 @@ router.post(
       where_listed,
       cover_letter,
       follow_up,
-      history
+      actions,
+      hiring_managers
     } = req.body;
     let { company_id } = req.body;
-    let company = await Company.findOne({ name: company_name });
+    let company = await Company.findOne({ name: company_name }).catch(err =>
+      console.log(`${company_name} doesn't yet exist. will create`)
+    );
     if (!company) {
       const newCompany = new Company({
         name: company_name
       });
-      company = await newCompany
-        .save()
-        .catch(err => res.status(500).json({ msg: 'Server Error' }));
+      company = await newCompany.save().catch(err => {
+        console.error(err);
+        return res.status(500).json({ msg: err });
+      });
     }
     company_id = company._id;
     const jobDetails = {
@@ -155,33 +174,40 @@ router.post(
       where_listed,
       cover_letter,
       follow_up,
-      history
+      actions,
+      hiring_managers
     };
-    const updatedjob = await Job.findByIdAndUpdate(
-      req.params.id,
-      jobDetails
-    ).catch(err => {
-      console.error(err);
-      res.status(500).json({ msg: 'Server Error' });
-    });
-
+    updatedJob = await Job.findByIdAndUpdate(req.params.id, jobDetails)
+      .exec()
+      .catch(err => {
+        console.error(err);
+        return res.status(500).json({ msg: err });
+      });
     if (
       finished_applying &&
-      !updatedJob.history.some(history => history.action === 'Applied')
-    )
-      updatedJob.history.unshift({
+      !updatedJob.actions.some(action => action.action === 'Applied')
+    ) {
+      updatedJob.finished_applying = true;
+      updatedJob.actions.unshift({
         _id: uuid.v4(),
         action: 'Applied',
         description: 'Applied to job',
         date: Date.now()
       });
-    await updatedJob.save();
-    res.status(201).json(updatedJob);
+    }
+    updatedJob
+      .save()
+      .then(job => res.status(201).json(job))
+      .catch(err => {
+        console.log(err);
+        return res.status(500).json({ msg: err });
+      });
   }
 );
 
 router.post('/:id/addAction', auth, async (req, res) => {
   job = await Job.findById(req.params.id)
+    .exec()
     .catch(err => {
       console.error(err);
       res.status(500).json({ msg: 'Server Error' });
@@ -190,8 +216,19 @@ router.post('/:id/addAction', auth, async (req, res) => {
       console.error(err);
       res.status(500).json(err);
     });
-  job.history.unshift(req.body);
+  job.action.unshift(req.body);
   if (req.body.action === 'Job Closed') job.still_open = false;
+  job.save().then(revisedJob => res.status(201).json(revisedJob));
+});
+
+router.post('/:id/addHiringManager', auth, async (req, res) => {
+  job = await Job.findById(req.params.id)
+    .exec()
+    .catch(err => {
+      console.error(err);
+      return res.status(500).json({ msg: 'Server Error' });
+    });
+  job.hiring_managers.unshift(req.body);
   job.save().then(revisedJob => res.status(201).json(revisedJob));
 });
 

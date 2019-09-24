@@ -12,6 +12,12 @@ router.get('/', auth, (req, res) => {
     .catch(err => res.status(500).json({ msg: err }));
 });
 
+router.get('/:type', auth, (req, res) => {
+  Template.find({ type: req.params.type })
+    .then(templates => res.json(templates))
+    .catch(err => res.status(500).json({ msg: err }));
+});
+
 router.get('/:id', auth, (req, res) => {
   Template.findOne({ name: req.params.name })
     .then(template => res.json(template))

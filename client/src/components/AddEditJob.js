@@ -8,7 +8,9 @@ import {
 import {
   getTemplates,
   addJob,
+  clearJob,
   addAction,
+  addHiringManager,
   editJob,
   getJob,
   setField,
@@ -18,15 +20,12 @@ import Spinner from './Spinner';
 import moment from 'moment';
 
 class AddEditJob extends Component {
-  state = {
-    action: '',
-    description: '',
-    date: Date.now()
-  };
   componentDidMount = () => {
     setTimeout(() => this.props.getTemplates(), 1000);
     if (this.props.match.params.id) {
       this.props.getJob(this.props.match.params.id);
+    } else {
+      this.props.clearJob(); //this should be unnecessary but to be safe.
     }
   };
 
@@ -35,11 +34,7 @@ class AddEditJob extends Component {
     this.props.addPossibleCompanies(this.props.job.job.company_name);
   };
 
-  internalChange = e => {
-    this.setState({ [e.target.name]: e.target.value });
-  };
-
-  externalChange = e => {
+  onChange = e => {
     if (e.target.type === 'checkbox') {
       this.props.setField(e.target.name, e.target.checked);
     } else if (e.target.name === 'company_id') {
@@ -50,13 +45,13 @@ class AddEditJob extends Component {
         ).name
       );
     } else if (e.target.name === 'cover_letter_template_select') {
-      let cover_letter_template = this.props.job.cover_letters.find(
+      let cover_letter_template = this.props.job.templates.find(
         cover_letter => cover_letter._id === e.target.value
       ).content;
       let cover_letter = cover_letter_template
-        .replace('%JOB_TITLE%', this.props.job.job.title)
-        .replace('%COMPANY%', this.props.job.job.company_name)
-        .replace('%WHERE_LISTED%', this.props.job.job.where_listed);
+        .replace(/%JOB_TITLE%/g, this.props.job.job.title)
+        .replace(/%COMPANY%/g, this.props.job.job.company_name)
+        .replace(/%WHERE_LISTED%/g, this.props.job.job.where_listed);
       this.props.setField('cover_letter', cover_letter);
       this.props.setField('toggle_show_cover_letter', true);
     } else {
@@ -73,11 +68,10 @@ class AddEditJob extends Component {
     }
   };
 
-  saveJob = e => {
+  saveJob = (e, redirecting = false) => {
     e.preventDefault();
     if (!this.props.job.job._id) this.props.addJob(this.props.job.job);
     else {
-      this.props.addAction(this.props.match.params.id, this.state);
       this.props.editJob(this.props.job.job);
     }
   };
@@ -89,7 +83,8 @@ class AddEditJob extends Component {
         this.props.setField('finished_applying', true);
       }
     }
-    this.saveJob(e);
+    this.saveJob(e, true);
+    this.props.clearJob();
     this.props.history.push('/');
   };
 
@@ -110,7 +105,7 @@ class AddEditJob extends Component {
                   name='title'
                   id='title'
                   className='form-control'
-                  onChange={this.externalChange}
+                  onChange={this.onChange}
                   value={this.props.job.job.title}
                 />
                 <datalist id='common-job-titles'>
@@ -128,7 +123,7 @@ class AddEditJob extends Component {
                   id='company'
                   className='form-control'
                   onBlur={this.onBlur}
-                  onChange={this.externalChange}
+                  onChange={this.onChange}
                   value={this.props.job.job.company_name}
                 />
               </div>
@@ -142,7 +137,7 @@ class AddEditJob extends Component {
                   list='where-listings'
                   name='where_listed'
                   className='form-control'
-                  onChange={this.externalChange}
+                  onChange={this.onChange}
                   value={this.props.job.job.where_listed}
                 />
                 <datalist id='where-listings'>
@@ -159,7 +154,7 @@ class AddEditJob extends Component {
                   name='company_id'
                   id='company_id'
                   className='form-control'
-                  onChange={this.externalChange}
+                  onChange={this.onChange}
                   value={this.props.job.job.company_id}
                 >
                   {this.props.company.possible_matches.length > 0 && (
@@ -181,7 +176,7 @@ class AddEditJob extends Component {
               type='checkbox'
               name='toggle_show_cover_letter'
               id='toggle_show_cover_letter'
-              onChange={this.externalChange}
+              onChange={this.onChange}
               checked={this.props.job.job.toggle_show_cover_letter}
             />
             <span>Cover Letter Area</span>
@@ -194,8 +189,10 @@ class AddEditJob extends Component {
                 type='date'
                 id='follow_up'
                 name='follow_up'
-                onChange={this.externalChange}
-                value={this.props.job.job.follow_up}
+                onChange={this.onChange}
+                value={moment(this.props.job.job.follow_up).format(
+                  'YYYY-MM-DD'
+                )}
               />
               <div className='form-group'>
                 <label
@@ -208,30 +205,101 @@ class AddEditJob extends Component {
                   name='cover_letter_template_select'
                   id='cover_letter_template_select'
                   className='form-control'
-                  onChange={this.externalChange}
+                  onChange={this.onChange}
                 >
                   <option value='0'>&lt;Choose&gt;</option>
-                  {this.props.job.cover_letters.map(cover_letter => (
-                    <option
-                      key={cover_letter._id}
-                      onChange={this.externalChange}
-                      value={cover_letter._id}
-                    >
-                      {cover_letter.name}
-                    </option>
-                  ))}
+                  {this.props.job.templates
+                    .filter(template => template.type === 'cover-letter')
+                    .map(cover_letter => (
+                      <option
+                        key={cover_letter._id}
+                        onChange={this.onChange}
+                        value={cover_letter._id}
+                      >
+                        {cover_letter.name}
+                      </option>
+                    ))}
                 </select>
               </div>
             </div>
+            <table id='hiring_manager'>
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Title</th>
+                  <th>LinkedIn</th>
+                  <th>Email</th>
+                  <th>Phone #</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>
+                    <input
+                      type='text'
+                      name='hiring_manager_name'
+                      id='hiring_manager_name'
+                      onChange={this.onChange}
+                      value={this.props.job.job.hiring_manager_name}
+                    />
+                  </td>
+                  <td>
+                    <input
+                      type='text'
+                      name='hiring_manager_title'
+                      id='hiring_manager_title'
+                      onChange={this.onChange}
+                      value={this.props.job.job.hiring_manager_title}
+                    />
+                  </td>
+                  <td>
+                    <input
+                      type='text'
+                      name='hiring_manager_contact_linkedin'
+                      id='hiring_manager_contact_linkedin'
+                      onChange={this.onChange}
+                      value={this.props.job.job.hiring_manager_contact_linkedin}
+                    />
+                  </td>
+                  <td>
+                    <input
+                      type='text'
+                      name='hiring_manager_contact_email'
+                      id='hiring_manager_contact_email'
+                      onChange={this.onChange}
+                      value={this.props.job.job.hiring_manager_contact_email}
+                    />
+                  </td>
+                  <td>
+                    <input
+                      type='text'
+                      name='hiring_manager_contact_phone'
+                      id='hiring_manager_contact_phone'
+                      onChange={this.onChange}
+                      value={this.props.job.job.hiring_manager_contact_phone}
+                    />
+                  </td>
+                </tr>
+                {this.props.job.job.hiring_managers.map(manager => (
+                  <tr key={manager._id}>
+                    <td>{manager.name}</td>
+                    <td>{manager.title}</td>
+                    <td>{manager.contact_linkedin}</td>
+                    <td>{manager.contact_email}</td>
+                    <td>{manager.contact_phone}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
             <div className='cover-letter-container'>
               <textarea
-                name='cover-letter'
-                onChange={this.externalChange}
+                name='cover_letter'
+                onChange={this.onChange}
                 value={this.props.job.job.cover_letter}
               />
             </div>
             <div className='job-details-row mt-1'>
-              <table id='history'>
+              <table id='action'>
                 <thead>
                   <tr>
                     <th>Action</th>
@@ -244,10 +312,9 @@ class AddEditJob extends Component {
                     <td>
                       <input
                         list='actions'
-                        onChange={this.internalChange}
-                        value={this.state.action}
-                        name='action'
-                        id='action'
+                        onChange={this.onChange}
+                        value={this.props.job.job.action_name}
+                        id='action_name'
                       />
                       <datalist id='actions'>
                         <option>Emailed</option>
@@ -258,23 +325,23 @@ class AddEditJob extends Component {
                     <td className='action-description'>
                       <input
                         type='text'
-                        onChange={this.internalChange}
-                        value={this.state.description}
-                        name='description'
-                        id='description'
+                        onChange={this.onChange}
+                        value={this.props.job.job.action_description}
+                        id='action_description'
                       />
                     </td>
                     <td>
                       <input
                         type='date'
-                        onChange={this.internalChange}
-                        value={moment(this.state.date).format('YYYY-MM-DD')}
-                        name='date'
-                        id='date'
+                        onChange={this.onChange}
+                        value={moment(this.props.job.job.action_date).format(
+                          'YYYY-MM-DD'
+                        )}
+                        id='action_date'
                       />
                     </td>
                   </tr>
-                  {this.props.job.job.history.map(action => (
+                  {this.props.job.job.actions.map(action => (
                     <tr key={action._id}>
                       <td>{action.action}</td>
                       <td className='action-description'>
@@ -296,7 +363,7 @@ class AddEditJob extends Component {
                   name='finished_applying'
                   id='finished_applying'
                   checked={this.props.job.job.finished_applying}
-                  onChange={this.externalChange}
+                  onChange={this.onChange}
                 />
               </div>
               <input type='submit' value='Save & Return' className='btn' />
@@ -305,7 +372,10 @@ class AddEditJob extends Component {
               </button>
               <button
                 className='btn'
-                onClick={() => this.props.history.push('/')}
+                onClick={e => {
+                  e.preventDefault();
+                  this.props.history.push('/');
+                }}
               >
                 Cancel
               </button>
@@ -336,6 +406,8 @@ export default connect(
     addPossibleCompanies,
     getTemplates,
     addJob,
+    addHiringManager,
+    clearJob,
     editJob,
     getJob,
     setField,

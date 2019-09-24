@@ -6,6 +6,11 @@ const TemplateSchema = new mongoose.Schema({
     unique: true,
     required: true
   },
+  type: {
+    //coverletter, followup
+    type: String,
+    required: true
+  },
   content: {
     type: String
   },

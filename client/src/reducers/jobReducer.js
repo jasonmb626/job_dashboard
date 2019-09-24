@@ -1,12 +1,15 @@
 import {
   JOBS_LOADING,
   ADD_JOB,
+  CLEAR_JOB,
   ADD_ACTION,
   EDIT_JOB,
   GET_JOBS,
   GET_JOB,
   GET_TEMPLATES,
-  SET_FIELD
+  SET_FIELD,
+  CLEAR_ACTION,
+  CLEAR_HIRING_MANAGER
 } from '../actions/types';
 
 const initialState = {
@@ -18,14 +21,23 @@ const initialState = {
     company_name: '',
     where_listed: '',
     follow_up: '',
-    history: [],
+    hiring_manager_name: '',
+    hiring_manager_title: '',
+    hiring_manager_contact_linkedin: '',
+    hiring_manager_contact_email: '',
+    hiring_manager_contact_phone: '',
+    hiring_managers: [],
+    action_name: '',
+    action_description: '',
+    action_date: '',
+    actions: [],
     toggle_show_cover_letter: false,
     cover_letter_template_select: 0,
     cover_letter: ''
   },
   jobLoading: true,
   jobsLoading: true,
-  cover_letters: []
+  templates: []
 };
 
 export default (state = initialState, action) => {
@@ -38,7 +50,7 @@ export default (state = initialState, action) => {
     case GET_TEMPLATES:
       return {
         ...state,
-        cover_letters: [...action.payload]
+        templates: [...action.payload]
       };
     case ADD_JOB:
       return {
@@ -46,13 +58,59 @@ export default (state = initialState, action) => {
         jobs: [...state.jobs, action.payload],
         job: action.payload
       };
-    case ADD_ACTION:
-      console.log(action.payload);
+    case CLEAR_JOB:
+      return {
+        ...state,
+        job: {
+          _id: '',
+          finished_applying: false,
+          title: '',
+          company_name: '',
+          where_listed: '',
+          follow_up: '',
+          hiring_manager_name: '',
+          hiring_manager_title: '',
+          hiring_manager_contact_linkedin: '',
+          hiring_manager_contact_email: '',
+          hiring_manager_contact_phone: '',
+          hiring_managers: [],
+          action_name: '',
+          action_description: '',
+          action_date: '',
+          actions: [],
+          toggle_show_cover_letter: false,
+          cover_letter_template_select: 0,
+          cover_letter: ''
+        }
+      };
+    case CLEAR_HIRING_MANAGER:
       return {
         ...state,
         job: {
           ...state.job,
-          history: [action.payload, ...state.job.history]
+          hiring_manager_name: '',
+          hiring_manager_title: '',
+          hiring_manager_contact_linkedin: '',
+          hiring_manager_contact_email: '',
+          hiring_manager_contact_phone: ''
+        }
+      };
+    case CLEAR_ACTION:
+      return {
+        ...state,
+        job: {
+          ...state.job,
+          action_name: '',
+          action_description: '',
+          action_date: ''
+        }
+      };
+    case ADD_ACTION:
+      return {
+        ...state,
+        job: {
+          ...state.job,
+          actions: [action.payload, ...state.job.actions]
         }
       };
     case EDIT_JOB:
