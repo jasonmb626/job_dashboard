@@ -14,7 +14,8 @@ import {
   editJob,
   getJob,
   setField,
-  getCoverLetter
+  getCoverLetter,
+  updateHiringManager
 } from '../actions/job';
 import Spinner from './Spinner';
 import moment from 'moment';
@@ -57,6 +58,11 @@ class AddEditJob extends Component {
     } else {
       this.props.setField(e.target.name, e.target.value);
     }
+  };
+
+  changeHiringManager = (id, e) => {
+    console.log(`${e.target.name} ${id}`);
+    this.props.updateHiringManager(id, e.target.name, e.target.value);
   };
 
   getCoverLetter = e => {
@@ -239,7 +245,7 @@ class AddEditJob extends Component {
                       type='text'
                       name='hiring_manager_name'
                       id='hiring_manager_name'
-                      onChange={this.onChange}
+                      onChange={this.changeHiringManager.bind(this, null)}
                       value={this.props.job.job.hiring_manager_name}
                     />
                   </td>
@@ -248,7 +254,7 @@ class AddEditJob extends Component {
                       type='text'
                       name='hiring_manager_title'
                       id='hiring_manager_title'
-                      onChange={this.onChange}
+                      onChange={this.changeHiringManager.bind(this, null)}
                       value={this.props.job.job.hiring_manager_title}
                     />
                   </td>
@@ -257,7 +263,7 @@ class AddEditJob extends Component {
                       type='text'
                       name='hiring_manager_contact_linkedin'
                       id='hiring_manager_contact_linkedin'
-                      onChange={this.onChange}
+                      onChange={this.changeHiringManager.bind(this, null)}
                       value={this.props.job.job.hiring_manager_contact_linkedin}
                     />
                   </td>
@@ -266,7 +272,7 @@ class AddEditJob extends Component {
                       type='text'
                       name='hiring_manager_contact_email'
                       id='hiring_manager_contact_email'
-                      onChange={this.onChange}
+                      onChange={this.changeHiringManager.bind(this, null)}
                       value={this.props.job.job.hiring_manager_contact_email}
                     />
                   </td>
@@ -275,18 +281,68 @@ class AddEditJob extends Component {
                       type='text'
                       name='hiring_manager_contact_phone'
                       id='hiring_manager_contact_phone'
-                      onChange={this.onChange}
+                      onChange={this.changeHiringManager.bind(this, null)}
                       value={this.props.job.job.hiring_manager_contact_phone}
                     />
                   </td>
                 </tr>
                 {this.props.job.job.hiring_managers.map(manager => (
                   <tr key={manager._id}>
-                    <td>{manager.name}</td>
-                    <td>{manager.title}</td>
-                    <td>{manager.contact_linkedin}</td>
-                    <td>{manager.contact_email}</td>
-                    <td>{manager.contact_phone}</td>
+                    <td>
+                      <input
+                        type='text'
+                        name='hiring_manager_name'
+                        value={manager.name}
+                        onChange={this.changeHiringManager.bind(
+                          this,
+                          manager._id
+                        )}
+                      />
+                    </td>
+                    <td>
+                      <input
+                        type='text'
+                        name='hiring_manager_title'
+                        value={manager.title}
+                        onChange={this.changeHiringManager.bind(
+                          this,
+                          manager._id
+                        )}
+                      />
+                    </td>
+                    <td>
+                      <input
+                        type='text'
+                        name='hiring_manager_contact_linkedin'
+                        value={manager.contact_linkedin}
+                        onChange={this.changeHiringManager.bind(
+                          this,
+                          manager._id
+                        )}
+                      />
+                    </td>
+                    <td>
+                      <input
+                        type='text'
+                        name='hiring_manager_contact_email'
+                        value={manager.contact_email}
+                        onChange={this.changeHiringManager.bind(
+                          this,
+                          manager._id
+                        )}
+                      />
+                    </td>
+                    <td>
+                      <input
+                        type='text'
+                        name='hiring_manager_contact_phone'
+                        value={manager.contact_phone}
+                        onChange={this.changeHiringManager.bind(
+                          this,
+                          manager._id
+                        )}
+                      />
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -411,6 +467,7 @@ export default connect(
     editJob,
     getJob,
     setField,
-    addAction
+    addAction,
+    updateHiringManager
   }
 )(AddEditJob);

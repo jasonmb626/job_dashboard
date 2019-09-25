@@ -40,6 +40,7 @@ export const loadUser = () => dispatch => {
   const token = localStorage.token;
   if (token) {
     setToken(localStorage.token);
+    console.log(axios.defaults.headers.common);
     axios
       .get('/api/auth')
       .then(res =>

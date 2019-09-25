@@ -12,7 +12,8 @@ import {
   GET_TEMPLATES,
   SET_FIELD,
   CLEAR_ACTION,
-  CLEAR_HIRING_MANAGER
+  CLEAR_HIRING_MANAGER,
+  UPDATE_HIRING_MANAGER
 } from './types';
 import Axios from 'axios';
 
@@ -175,6 +176,18 @@ export const setField = (field, value) => {
   return {
     type: SET_FIELD,
     payload: {
+      field,
+      value
+    }
+  };
+};
+
+export const updateHiringManager = (_id, field, value) => {
+  console.log(`Updating hiring manager ${_id} ${field} ${value}`);
+  return {
+    type: UPDATE_HIRING_MANAGER,
+    payload: {
+      _id,
       field,
       value
     }

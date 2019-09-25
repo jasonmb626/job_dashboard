@@ -9,7 +9,8 @@ import {
   GET_TEMPLATES,
   SET_FIELD,
   CLEAR_ACTION,
-  CLEAR_HIRING_MANAGER
+  CLEAR_HIRING_MANAGER,
+  UPDATE_HIRING_MANAGER
 } from '../actions/types';
 
 const initialState = {
@@ -56,7 +57,7 @@ export default (state = initialState, action) => {
       return {
         ...state,
         jobs: [...state.jobs, action.payload],
-        job: action.payload
+        job: { ...state.job, ...action.payload }
       };
     case CLEAR_JOB:
       return {
@@ -146,6 +147,27 @@ export default (state = initialState, action) => {
         ...state,
         job: { ...state.job, [action.payload.field]: action.payload.value }
       };
+    case UPDATE_HIRING_MANAGER:
+      if (action.payload._id)
+        return {
+          ...state,
+          job: {
+            ...state.job,
+            hiring_managers: state.job.hiring_managers.map(manager =>
+              manager._id === action.payload._id
+                ? { ...manager, [action.payload.field.slice(15)]: action.value } //text input name is hiring_manager_* but field name is just *
+                : manager
+            )
+          }
+        };
+      else
+        return {
+          ...state,
+          job: {
+            ...state.job,
+            [action.payload.field]: action.payload.value
+          }
+        };
     default:
       return state;
   }

@@ -16,6 +16,7 @@ module.exports = (req, res, next) => {
     const { id } = decoded.user;
     const user = await User.findById(id)
       .select('-password')
+      .exec()
       .catch(err => {
         console.error(err);
         res.status(401).json({ msg: 'No such user' });

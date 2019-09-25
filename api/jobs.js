@@ -13,6 +13,7 @@ router.use(express.json());
 
 router.get('/', auth, (req, res) => {
   Job.find()
+    .sort({ follow_up: 1, date: 1 })
     .populate('company', 'name -_id')
     .then(jobs => {
       revisedJobs = jobs.map(job => {
