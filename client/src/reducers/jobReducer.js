@@ -32,6 +32,7 @@ const initialState = {
     action_description: '',
     action_date: '',
     actions: [],
+    still_open: true,
     toggle_show_cover_letter: false,
     cover_letter_template_select: 0,
     cover_letter: ''
@@ -79,6 +80,7 @@ export default (state = initialState, action) => {
           action_description: '',
           action_date: '',
           actions: [],
+          still_open: true,
           toggle_show_cover_letter: false,
           cover_letter_template_select: 0,
           cover_letter: ''

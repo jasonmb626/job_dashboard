@@ -144,6 +144,7 @@ router.post(
   ],
   async (req, res) => {
     console.log('In post:id');
+    console.log(req.body);
     const {
       finished_applying,
       title,
@@ -152,6 +153,7 @@ router.post(
       cover_letter,
       follow_up,
       actions,
+      still_open,
       hiring_managers
     } = req.body;
     let { company_id } = req.body;
@@ -176,6 +178,7 @@ router.post(
       cover_letter,
       follow_up,
       actions,
+      still_open,
       hiring_managers
     };
     updatedJob = await Job.findByIdAndUpdate(req.params.id, jobDetails)

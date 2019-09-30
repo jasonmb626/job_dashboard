@@ -121,19 +121,20 @@ export const editJob = job => dispatch => {
   });
   const action = {
     _id: uuid.v4(),
-    name: job.action_name,
+    action: job.action_name,
     description: job.action_description,
-    date: job.action_date
+    date: job.action_date ? job.action_date : Date.now()
   };
   const hiring_manager = {
     _id: uuid.v4(),
-    name: job.hiring_manager_name,
+    action: job.hiring_manager_name,
     title: job.hiring_manager_title,
     contact_linkedin: job.hiring_manager_contact_linkedin,
     contact_email: job.hiring_manager_contact_email,
     contact_phone: job.hiring_manager_contact_phone
   };
   if (action.name) job.actions.unshift(action);
+  if (action.name === 'Job Closed') job.still_open = false;
   if (hiring_manager.name) job.hiring_managers.unshift(hiring_manager);
   console.log(`Syncing edit job to database for ${job._id}`);
   console.log(job);

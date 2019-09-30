@@ -87,7 +87,7 @@ class Dashboard extends Component {
         <table id='jobs'>
           <thead>
             <tr>
-              <th colSpan='5'>Remaining Open jobs</th>
+              <th colSpan='6'>Remaining Open jobs</th>
             </tr>
             <tr>
               <th>
@@ -102,13 +102,18 @@ class Dashboard extends Component {
               </th>
               <th>Company</th>
               <th>Applied</th>
+              <th>Still Open?</th>
               <th>Follow Up</th>
               <th>&darr;</th>
             </tr>
           </thead>
           <tbody>
             {this.props.job.jobs
-              .filter(job => new Date(job.follow_up).valueOf() > Date.now())
+              .filter(
+                job =>
+                  new Date(job.follow_up).valueOf() > Date.now() ||
+                  !job.still_open
+              )
               .map(
                 job =>
                   (job.still_open || this.state.all_jobs) && (
@@ -118,6 +123,7 @@ class Dashboard extends Component {
                       </td>
                       <td>{job.company_name}</td>
                       <td>{moment(job.date).format('ddd, MMM DD')}</td>
+                      <td>{job.still_open ? 'Yes' : 'No'}</td>
                       <td>
                         {moment(job.follow_up)
                           .add(1, 'day')

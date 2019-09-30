@@ -371,6 +371,7 @@ class AddEditJob extends Component {
                         onChange={this.onChange}
                         value={this.props.job.job.action_name}
                         id='action_name'
+                        name='action_name'
                       />
                       <datalist id='actions'>
                         <option>Emailed</option>
@@ -384,6 +385,7 @@ class AddEditJob extends Component {
                         onChange={this.onChange}
                         value={this.props.job.job.action_description}
                         id='action_description'
+                        name='action_description'
                       />
                     </td>
                     <td>
@@ -394,6 +396,7 @@ class AddEditJob extends Component {
                           'YYYY-MM-DD'
                         )}
                         id='action_date'
+                        name='action_date'
                       />
                     </td>
                   </tr>
