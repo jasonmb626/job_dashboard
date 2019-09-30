@@ -34,14 +34,6 @@ class Dashboard extends Component {
     if (this.props.job.jobsLoading) return <Spinner />;
     return (
       <div className='dashboard-container'>
-        <button
-          onClick={() => {
-            this.props.history.push('/jobs/new');
-          }}
-          className='btn'
-        >
-          Add Job
-        </button>
         <table id='jobs'>
           <thead>
             <tr>

@@ -1,10 +1,14 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { logout } from '../actions/auth';
+import moment from 'moment';
 
 class Navbar extends Component {
+  componentDidMount() {
+    console.log(this);
+  }
   render() {
     return (
       <div className='navbar'>
@@ -13,9 +17,26 @@ class Navbar extends Component {
             Job Dashboard
           </Link>
           {this.props.auth.isAuthenticated && (
-            <button className='link-btn' onClick={this.props.logout}>
-              Logout
-            </button>
+            <>
+              <span>
+                <Link to='/jobs/new' className='btn mr-1'>
+                  Add Job
+                </Link>
+                Applied Today
+                <span className='badge'>
+                  {
+                    this.props.job.jobs.filter(
+                      job =>
+                        moment(job.date).format('YYYY-MM-DD') ===
+                        moment(Date.now()).format('YYYY-MM-DD')
+                    ).length
+                  }
+                </span>
+              </span>
+              <button className='link-btn' onClick={this.props.logout}>
+                Logout
+              </button>
+            </>
           )}
         </div>
       </div>
@@ -25,11 +46,13 @@ class Navbar extends Component {
 
 Navbar.propTypes = {
   auth: PropTypes.object.isRequired,
+  job: PropTypes.object.isRequired,
   logout: PropTypes.func.isRequired
 };
 
 const mapStateToProps = state => ({
-  auth: state.auth
+  auth: state.auth,
+  job: state.job
 });
 
 export default connect(

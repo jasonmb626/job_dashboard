@@ -13,6 +13,7 @@ import {
   addHiringManager,
   editJob,
   getJob,
+  getJobs,
   setField,
   getCoverLetter,
   updateHiringManager
@@ -22,6 +23,7 @@ import moment from 'moment';
 
 class AddEditJob extends Component {
   componentDidMount = () => {
+    this.props.getJobs();
     setTimeout(() => this.props.getTemplates(), 1000);
     if (this.props.match.params.id) {
       this.props.getJob(this.props.match.params.id);
@@ -469,6 +471,7 @@ export default connect(
     clearJob,
     editJob,
     getJob,
+    getJobs,
     setField,
     addAction,
     updateHiringManager
