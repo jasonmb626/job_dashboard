@@ -28,7 +28,8 @@ class Navbar extends Component {
                     this.props.job.jobs.filter(
                       job =>
                         moment(job.date).format('YYYY-MM-DD') ===
-                        moment(Date.now()).format('YYYY-MM-DD')
+                          moment(Date.now()).format('YYYY-MM-DD') &&
+                        job.finished_applying
                     ).length
                   }
                 </span>

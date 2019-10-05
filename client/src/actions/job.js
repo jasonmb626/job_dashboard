@@ -133,8 +133,8 @@ export const editJob = job => dispatch => {
     contact_email: job.hiring_manager_contact_email,
     contact_phone: job.hiring_manager_contact_phone
   };
-  if (action.name) job.actions.unshift(action);
-  if (action.name === 'Job Closed') job.still_open = false;
+  if (action.action) job.actions.unshift(action);
+  if (action.action === 'Job Closed') job.still_open = false;
   if (hiring_manager.name) job.hiring_managers.unshift(hiring_manager);
   console.log(`Syncing edit job to database for ${job._id}`);
   console.log(job);
