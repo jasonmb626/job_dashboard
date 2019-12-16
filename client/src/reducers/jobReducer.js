@@ -58,7 +58,8 @@ export default (state = initialState, action) => {
       return {
         ...state,
         jobs: [...state.jobs, action.payload],
-        job: { ...state.job, ...action.payload }
+        job: { ...state.job, ...action.payload },
+        jobsLoading: false
       };
     case CLEAR_JOB:
       return {

@@ -21,17 +21,13 @@ class Dashboard extends Component {
 
   componentDidMount() {
     this.props.getJobs();
-    setTimeout(
-      () => this.props.jobsLoading && this.props.history.push('/'),
-      3000
-    ); //refresh page if stuck loading
   }
   static propTypes = {
     auth: PropTypes.object.isRequired
   };
 
   render() {
-    if (this.props.job.jobsLoading) return <Spinner />;
+    if (this.props.job.jobsLoading) return (<Spinner />);
     return (
       <div className='dashboard-container'>
         <table id='jobs'>

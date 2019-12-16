@@ -43,6 +43,9 @@ export const addJob = job => dispatch => {
   dispatch({
     type: JOB_LOADING
   });
+  dispatch({
+    type: JOBS_LOADING
+  });
   const action = {
     _id: uuid.v4(),
     name: job.action_name,

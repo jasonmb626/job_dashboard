@@ -25,6 +25,7 @@ class Navbar extends Component {
                 Applied Today
                 <span className='badge'>
                   {
+                    this.props.job.jobsLoading ? "..." :
                     this.props.job.jobs.filter(
                       job =>
                         moment(job.date).format('YYYY-MM-DD') ===
