@@ -39,7 +39,7 @@ export const getJob = id => dispatch => {
   });
 };
 
-export const addJob = job => dispatch => {
+export const addJob = job => dispatch => new Promise((resolve, reject) => {
   dispatch({
     type: JOB_LOADING
   });
@@ -63,13 +63,14 @@ export const addJob = job => dispatch => {
   if (action.name) job.actions.unshift(action);
   if (hiring_manager.name) job.hiring_managers.unshift(hiring_manager);
   console.log(job);
-  Axios.post('/api/jobs', job).then(res =>
+  Axios.post('/api/jobs', job).then(res => {
     dispatch({
       type: ADD_JOB,
       payload: res.data
-    })
-  );
-};
+    });
+    resolve();
+  });
+});
 
 export const clearJob = () => {
   return {
@@ -118,7 +119,7 @@ export const addHiringManager = (id, hiring_manager) => {
   };
 };
 
-export const editJob = job => dispatch => {
+export const editJob = job => dispatch => new Promise((resolve, reject) => {
   dispatch({
     type: JOB_LOADING
   });
@@ -141,19 +142,23 @@ export const editJob = job => dispatch => {
   if (hiring_manager.name) job.hiring_managers.unshift(hiring_manager);
   console.log(`Syncing edit job to database for ${job._id}`);
   console.log(job);
-  Axios.post(`/api/jobs/${job._id}`, job).then(res =>
+  dispatch({
+    type: JOBS_LOADING
+  });
+  Axios.post(`/api/jobs/${job._id}`, job).then(res => {
     dispatch({
       type: EDIT_JOB,
       payload: res.data
-    })
-  );
+    });
+    resolve();
+  });
   dispatch({
     type: CLEAR_ACTION
   });
   dispatch({
     type: CLEAR_HIRING_MANAGER
   });
-};
+});
 
 export const getTemplates = type => dispatch => {
   if (type)

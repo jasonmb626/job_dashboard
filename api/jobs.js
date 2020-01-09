@@ -112,17 +112,19 @@ router.post(
         description: 'Applied to job',
         date: Date.now()
       });
-    job
-      .save()
-      .then(newJob => {
-        revisedJob = { ...newJob._doc, company_name };
-        console.log(revisedJob);
-        return res.status(201).json(revisedJob);
-      })
-      .catch(err => {
+    try {
+      console.log('Before job save...');
+      console.log(job);
+      revisedJob = await job.save();
+      console.log('After job save...');
+      console.log(revisedJob);
+      revisedJob = { ...revisedJob._doc, company_name };
+      console.log(revisedJob);
+      return res.status(201).json(revisedJob);
+    } catch(err) {
         console.error(err);
         res.status(500).json({ msg: 'Server Error' });
-      });
+    }
   }
 );
 

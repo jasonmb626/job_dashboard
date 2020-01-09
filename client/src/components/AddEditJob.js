@@ -78,9 +78,9 @@ class AddEditJob extends Component {
 
   saveJob = (e, redirecting = false) => {
     e.preventDefault();
-    if (!this.props.job.job._id) this.props.addJob(this.props.job.job);
+    if (!this.props.job.job._id) return this.props.addJob(this.props.job.job);
     else {
-      this.props.editJob(this.props.job.job);
+      return this.props.editJob(this.props.job.job);
     }
   };
 
@@ -91,9 +91,10 @@ class AddEditJob extends Component {
         this.props.setField('finished_applying', true);
       }
     }
-    this.saveJob(e, true);
-    this.props.clearJob();
-    this.props.history.push('/');
+    this.saveJob(e, true).then(() => {
+      this.props.clearJob();
+      this.props.history.push('/');
+    });
   };
 
   render() {

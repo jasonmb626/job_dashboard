@@ -57,7 +57,7 @@ export default (state = initialState, action) => {
     case ADD_JOB:
       return {
         ...state,
-        jobs: [...state.jobs, action.payload],
+        jobs: [...state.jobs, {...action.payload}],
         job: { ...state.job, ...action.payload },
         jobsLoading: false
       };
@@ -120,12 +120,10 @@ export default (state = initialState, action) => {
     case EDIT_JOB:
       return {
         ...state,
-        jobs: [
-          ...state.jobs.map(job => {
-            if (job._id !== action.payload._id) return job;
+        jobs: state.jobs.map(job => {
+            if (job._id !== action.payload._id) return {...job};
             else return { ...job, ...action.payload };
-          })
-        ],
+          }),
         jobsLoading: false
       };
     case GET_JOBS:
