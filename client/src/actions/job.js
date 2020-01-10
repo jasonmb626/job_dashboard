@@ -46,22 +46,6 @@ export const addJob = job => dispatch => new Promise((resolve, reject) => {
   dispatch({
     type: JOBS_LOADING
   });
-  const action = {
-    _id: uuid.v4(),
-    name: job.action_name,
-    description: job.action_description,
-    date: job.action_date
-  };
-  const hiring_manager = {
-    _id: uuid.v4(),
-    name: job.hiring_manager_name,
-    title: job.hiring_manager_title,
-    contact_linkedin: job.hiring_manager_contact_linkedin,
-    contact_email: job.hiring_manager_contact_email,
-    contact_phone: job.hiring_manager_contact_phone
-  };
-  if (action.name) job.actions.unshift(action);
-  if (hiring_manager.name) job.hiring_managers.unshift(hiring_manager);
   console.log(job);
   Axios.post('/api/jobs', job).then(res => {
     dispatch({
@@ -69,7 +53,7 @@ export const addJob = job => dispatch => new Promise((resolve, reject) => {
       payload: res.data
     });
     resolve();
-  });
+  }).catch(err => console.log(err));
 });
 
 export const clearJob = () => {
@@ -123,25 +107,6 @@ export const editJob = job => dispatch => new Promise((resolve, reject) => {
   dispatch({
     type: JOB_LOADING
   });
-  const action = {
-    _id: uuid.v4(),
-    action: job.action_name,
-    description: job.action_description,
-    date: job.action_date ? job.action_date : Date.now()
-  };
-  const hiring_manager = {
-    _id: uuid.v4(),
-    action: job.hiring_manager_name,
-    title: job.hiring_manager_title,
-    contact_linkedin: job.hiring_manager_contact_linkedin,
-    contact_email: job.hiring_manager_contact_email,
-    contact_phone: job.hiring_manager_contact_phone
-  };
-  if (action.action) job.actions.unshift(action);
-  if (action.action === 'Job Closed') job.still_open = false;
-  if (hiring_manager.name) job.hiring_managers.unshift(hiring_manager);
-  console.log(`Syncing edit job to database for ${job._id}`);
-  console.log(job);
   dispatch({
     type: JOBS_LOADING
   });

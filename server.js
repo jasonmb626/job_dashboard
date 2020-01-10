@@ -12,8 +12,4 @@ app.use('/api/jobs', require('./api/jobs'));
 app.use('/api/users', require('./api/users'));
 app.use('/api/auth', require('./api/auth'));
 
-app.get('/api/testTime', (req, res) => {
-    res.json(Date.now());
-});
-
 app.listen(PORT, () => console.log(`Server running on port ${PORT}.`));

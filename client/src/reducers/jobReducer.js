@@ -1,3 +1,4 @@
+import moment from 'moment';
 import {
   JOBS_LOADING,
   ADD_JOB,
@@ -21,7 +22,7 @@ const initialState = {
     title: '',
     company_name: '',
     where_listed: '',
-    follow_up: '',
+    follow_up: moment(Date.now() + 7 * 24 * 60 * 60 * 1000 ).format('YYYY-MM-DD'),
     hiring_manager_name: '',
     hiring_manager_title: '',
     hiring_manager_contact_linkedin: '',
@@ -30,7 +31,7 @@ const initialState = {
     hiring_managers: [],
     action_name: '',
     action_description: '',
-    action_date: '',
+    action_date: moment(Date.now()).format('YYYY-MM-DD'),
     actions: [],
     still_open: true,
     toggle_show_cover_letter: false,
@@ -70,7 +71,7 @@ export default (state = initialState, action) => {
           title: '',
           company_name: '',
           where_listed: '',
-          follow_up: '',
+          follow_up: moment(Date.now() + 7 * 24 * 60 * 60 * 1000 ).format('YYYY-MM-DD'),
           hiring_manager_name: '',
           hiring_manager_title: '',
           hiring_manager_contact_linkedin: '',
@@ -79,7 +80,7 @@ export default (state = initialState, action) => {
           hiring_managers: [],
           action_name: '',
           action_description: '',
-          action_date: '',
+          action_date: moment(Date.now()).format('YYYY-MM-DD'),
           actions: [],
           still_open: true,
           toggle_show_cover_letter: false,
@@ -106,7 +107,7 @@ export default (state = initialState, action) => {
           ...state.job,
           action_name: '',
           action_description: '',
-          action_date: ''
+          action_date: moment(Date.now()).format('YYYY-MM-DD'),
         }
       };
     case ADD_ACTION:
@@ -129,6 +130,7 @@ export default (state = initialState, action) => {
     case GET_JOBS:
       return {
         ...state,
+        job: {...state.job},
         jobs: action.payload,
         jobsLoading: false
       };
@@ -149,18 +151,14 @@ export default (state = initialState, action) => {
         job: { ...state.job, [action.payload.field]: action.payload.value }
       };
     case UPDATE_HIRING_MANAGER:
-      if (action.payload._id)
-        return {
-          ...state,
-          job: {
-            ...state.job,
-            hiring_managers: state.job.hiring_managers.map(manager =>
-              manager._id === action.payload._id
-                ? { ...manager, [action.payload.field.slice(15)]: action.value } //text input name is hiring_manager_* but field name is just *
-                : manager
-            )
-          }
-        };
+      if (action.payload._id) {
+        const newState = {...state};
+        const manager = state.job.hiring_managers.find(mgr => mgr._id === action.payload._id);
+        if (manager) {
+          manager[action.payload.field.slice(15)] = action.payload.value;
+        }
+        return newState;
+      }
       else
         return {
           ...state,

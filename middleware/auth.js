@@ -2,6 +2,8 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 const config = require('config');
 
+//Middleware that stops protected routes here if token is missing or invalid.
+//It also adds the entire user object to the headers of the user whose token is attached.
 module.exports = (req, res, next) => {
   const token = req.headers['x-auth-token'];
   if (!token) {
@@ -15,13 +17,13 @@ module.exports = (req, res, next) => {
     }
     const { id } = decoded.user;
     const user = await User.findById(id)
-      .select('-password')
+      .select('-password') //don't send back the password!
       .exec()
       .catch(err => {
         console.error(err);
         res.status(401).json({ msg: 'No such user' });
       });
     req.headers.user = user;
-    next();
+    next(); //authorized, so call next middleware
   });
 };

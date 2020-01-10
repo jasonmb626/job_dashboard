@@ -1,14 +1,11 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Link, Redirect } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { logout } from '../actions/auth';
 import moment from 'moment';
 
 class Navbar extends Component {
-  componentDidMount() {
-    console.log(this);
-  }
   render() {
     return (
       <div className='navbar'>

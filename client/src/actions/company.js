@@ -15,7 +15,7 @@ export const addPossibleCompanies = text => dispatch => {
     .split(' ')
     .forEach(word => {
       if (!excludes.includes(word)) {
-        Axios.get(`/api/companies/string/${word}`)
+        Axios.get(`/api/companies/string/${encodeURIComponent(word)}`)
           .then(res => {
             dispatch({
               type: ADD_POSSIBLE_COMPANIES,

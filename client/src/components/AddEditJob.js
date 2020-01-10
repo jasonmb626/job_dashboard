@@ -34,6 +34,7 @@ class AddEditJob extends Component {
 
   onBlur = e => {
     this.props.clearPossibleCompanies();
+    console.log(this.props.job.job.company_name);
     this.props.addPossibleCompanies(this.props.job.job.company_name);
   };
 
@@ -76,7 +77,7 @@ class AddEditJob extends Component {
     }
   };
 
-  saveJob = (e, redirecting = false) => {
+  saveJob = (e) => {
     e.preventDefault();
     if (!this.props.job.job._id) return this.props.addJob(this.props.job.job);
     else {
@@ -91,10 +92,10 @@ class AddEditJob extends Component {
         this.props.setField('finished_applying', true);
       }
     }
-    this.saveJob(e, true).then(() => {
+    this.saveJob(e).then(() => {
       this.props.clearJob();
       this.props.history.push('/');
-    });
+    }).catch(err => console.log(err));
   };
 
   render() {
@@ -409,7 +410,7 @@ class AddEditJob extends Component {
                       <td className='action-description'>
                         {action.description}
                       </td>
-                      <td>{moment(action.date).format('ddd, MMM DD')}</td>
+                      <td>{moment(action.date).format('YYYY-MM-DD')}</td>
                     </tr>
                   ))}
                 </tbody>

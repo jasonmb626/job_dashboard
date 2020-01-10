@@ -21,8 +21,7 @@ const JobSchema = new mongoose.Schema({
     default: false
   },
   follow_up: {
-    type: Date,
-    default: Date.now() + 3 * 24 * 60 * 60 * 1000
+    type: Date
   },
   hiring_managers: {
     type: Array
@@ -36,7 +35,7 @@ const JobSchema = new mongoose.Schema({
   },
   date: {
     type: Date,
-    default: Date.now()
+    default: Date.now
   }
 });
 

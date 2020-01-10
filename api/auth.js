@@ -8,16 +8,21 @@ const auth = require('../middleware/auth');
 
 router.use(express.json());
 
+// @route    POST api/auth
+// @desc     Log In a User
+// @access   Public
 router.post('/', (req, res) => {
-  console.log('Loggin in');
   const { login, password } = req.body;
-  console.log(`${login} ${password}`);
   User.findOne({ login }).then(validUser => {
+    if (!validUser) { 
+      return res.status(401).json({ msg: 'No such username' });
+    }
     bcrypt
       .compare(password, validUser.password)
       .then(isMatch => {
-        if (!isMatch)
+        if (!isMatch) {
           return res.status(401).json({ msg: 'Incorrect password' });
+        }
         const tokenContent = {
           user: {
             id: validUser.id
@@ -30,6 +35,10 @@ router.post('/', (req, res) => {
   });
 });
 
+// @route    POST api/posts
+// @desc     Get User details based on user authorized with attached token 
+//           (the user is attached to the req at this point due to the auth middleware used)
+// @access   Private
 router.get('/', auth, (req, res) => {
   res.json(req.headers.user);
 });

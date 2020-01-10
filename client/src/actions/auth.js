@@ -16,11 +16,11 @@ export const login = (login, password) => dispatch => {
   axios
     .post('/api/auth', { login, password })
     .then(res => {
+      dispatch(loadUser());
       dispatch({
         type: LOGIN_SUCCESS,
         payload: res.data
       });
-      dispatch(loadUser());
     })
     .catch(err =>
       dispatch({
@@ -40,7 +40,6 @@ export const loadUser = () => dispatch => {
   const token = localStorage.token;
   if (token) {
     setToken(localStorage.token);
-    console.log(axios.defaults.headers.common);
     axios
       .get('/api/auth')
       .then(res =>
