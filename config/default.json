@@ -1,0 +1,4 @@
+{
+  "mongoURI": "mongodb+srv://<user>:<password>@cluster0-qmira.mongodb.net/jobsgi",
+  "jwtSecret": "<secret>"
+}
