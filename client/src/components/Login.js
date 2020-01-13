@@ -1,13 +1,16 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { login } from '../actions/auth';
+import { login, register } from '../actions/auth';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
 
 class Login extends Component {
   state = {
+    name: '',
     login: '',
-    password: ''
+    password: '',
+    confirmPassword: '',
+    registerMode: false
   };
 
   static propTypes = {
@@ -21,7 +24,27 @@ class Login extends Component {
 
   onSubmit = e => {
     e.preventDefault();
-    this.props.login(this.state.login, this.state.password);
+    if (this.state.registerMode) {
+      if (this.state.name.length < 1) {
+        alert('Name must have at least 1 character.')
+        return;
+      }
+      if (this.state.login.length < 1) {
+        alert('Login must have at least 1 character.')
+        return;
+      }
+      if (this.state.password.length < 8) {
+        alert('Passwords must have at least 8 characters.')
+        return;
+      }
+      if (this.state.password !== this.state.confirmPassword) {
+        alert('Passwords do not match.')
+        return;
+      }
+      this.props.register(this.state.name, this.state.login, this.state.password);
+    } else {
+      this.props.login(this.state.login, this.state.password);
+    }
   };
 
   render() {
@@ -30,6 +53,20 @@ class Login extends Component {
     ) : (
       <div className='login-container'>
         <form onSubmit={this.onSubmit}>
+          {this.state.registerMode && (
+          <div className='form-group'>
+            <label htmlFor='name' className='form-control'>
+              Name
+            </label>
+            <input
+              type='text'
+              name='name'
+              id='name'
+              className='form-control'
+              onChange={this.onChange}
+              value={this.state.name}
+            />
+          </div>)}
           <div className='form-group'>
             <label htmlFor='login' className='form-control'>
               Login
@@ -56,7 +93,22 @@ class Login extends Component {
               value={this.state.password}
             />
           </div>
-          <input type='submit' className='btn' value='Login' />
+          {this.state.registerMode && (
+          <div className='form-group'>
+            <label htmlFor='confirmPassword' className='form-control'>
+              Confirm Password
+            </label>
+            <input
+              type='password'
+              name='confirmPassword'
+              id='confirmPassword'
+              className='form-control'
+              onChange={this.onChange}
+              value={this.state.confirmPassword}
+            />
+          </div>)}
+          <input type='submit' className='btn' name='login' value={this.state.registerMode ? 'Register' : 'Login'} />
+          <button type="button" className='switch' onClick={() => this.setState({registerMode: !this.state.registerMode})}>{this.state.registerMode ? 'Switch to Login Mode' : 'Switch to Register Mode'}</button>
         </form>
       </div>
     );
@@ -70,5 +122,5 @@ const mapStateToProps = state => ({
 
 export default connect(
   mapStateToProps,
-  { login }
+  { login, register }
 )(Login);

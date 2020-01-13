@@ -23,7 +23,15 @@ router.post('/', async (req, res) => {
   });
   newUser
     .save()
-    .then(user => res.json(user))
+    .then(user => {
+      const tokenContent = {
+        user: {
+          id: user.id
+        }
+      };
+      const token = jwt.sign(tokenContent, config.get('jwtSecret'));
+      return res.json(token);
+    })
     .catch(error => console.error(error));
 });
 

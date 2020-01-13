@@ -31,6 +31,25 @@ export const login = (login, password) => dispatch => {
     );
 };
 
+export const register = (name, login, password) => dispatch => {
+  axios
+    .post('/api/users', { name, login, password })
+    .then(res => {
+      localStorage.setItem('token', res.data);
+      dispatch(loadUser());
+      dispatch({
+        type: LOGIN_SUCCESS,
+        payload: res.data
+      });
+    })
+    .catch(err =>
+      dispatch({
+        type: LOGIN_FAILURE,
+        payload: err.message
+      })
+    );
+};
+
 export const logout = () => {
   return {
     type: LOGOUT

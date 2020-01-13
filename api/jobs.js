@@ -15,7 +15,7 @@ router.use(express.json());
 // @desc     Get all jobs (not just job titles but all job details) in database
 // @access   Private
 router.get('/', auth, (req, res) => {
-  Job.find()
+  Job.find({user: req.headers.user.id})
     //need jobs that require following up (ascending order) and by application date second
     .sort({ follow_up: 1, date: 1 })
     //to avoid duplication of company names feild is linked by id
@@ -116,6 +116,7 @@ async function addEditJob(req, res, newJob) {
   };
   if (newJob) {
     job = new Job({
+      user: req.headers.user.id,
       title,
       finished_applying,
       company: company_id,
