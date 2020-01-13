@@ -1,4 +1,4 @@
 {
-  "mongoURI": "mongodb+srv://jason:go7ifDRGpWjtfrC8@cluster0-qmira.mongodb.net/jobsgi",
-  "jwtSecret": "ZUjaPtrvCrSCdJ8"
+  "mongoURI": "mongodb+srv://<username>:<password>@cluster0-qmira.mongodb.net/jobsgi",
+  "jwtSecret": "<secret>"
 }
