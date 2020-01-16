@@ -8,7 +8,7 @@ module.exports = generatePDF = async (content, id, res) => {
     await page.setContent(content.replace(/\n/g, '<br />'));
     await page.emulateMedia('screen');
     await page.pdf({
-      path: `Resumes & Resources/CoverLetters/${id}.pdf`,
+      path: `Resumes_&_Resources/CoverLetters/${id}.pdf`,
       format: 'Letter',
       printBackground: true,
       margin: { top: '.75in', right: '.75in', bottom: '.75in', left: '.75in' }
@@ -18,7 +18,7 @@ module.exports = generatePDF = async (content, id, res) => {
       'Content-Disposition:attachment;filename="Jason Brunelle Cover Letter.pdf"'
     );
     console.log(__dirname);
-    res.sendFile(`${__dirname}/Resumes & Resources/CoverLetters/${id}.pdf`);
+    res.sendFile(`${__dirname}/Resumes_&_Resources/CoverLetters/${id}.pdf`);
     console.log('done');
     await browser.close();
   } catch (error) {
