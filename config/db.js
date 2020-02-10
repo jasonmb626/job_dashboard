@@ -3,6 +3,9 @@ const config = require('config');
 
 const mongoURI = process.env.MONGO_URI || config.get('mongoURI');
 
+console.log(process.env);
+console.log(mongoURI);
+
 let db;
 try {
   db = mongoose.connect(mongoURI, {
