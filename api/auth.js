@@ -6,6 +6,8 @@ const config = require('config');
 const User = require('../models/User');
 const auth = require('../middleware/auth');
 
+const JWT_SECRET = process.env.JWT_SECRET || config.get('jwtSecret');
+
 router.use(express.json());
 
 // @route    POST api/auth
@@ -28,7 +30,7 @@ router.post('/', (req, res) => {
             id: validUser.id
           }
         };
-        const token = jwt.sign(tokenContent, config.get('jwtSecret'));
+        const token = jwt.sign(tokenContent, JWT_SECRET);
         return res.json(token);
       })
       .catch(err => console.error(err));

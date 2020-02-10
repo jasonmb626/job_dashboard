@@ -5,6 +5,8 @@ const jwt = require('jsonwebtoken');
 const config = require('config');
 const User = require('../models/User');
 
+const JWT_SECRET = process.env.JWT_SECRET || config.get('jwtSecret');
+
 router.use(express.json());
 
 // @route    POST api/users
@@ -29,7 +31,7 @@ router.post('/', async (req, res) => {
           id: user.id
         }
       };
-      const token = jwt.sign(tokenContent, config.get('jwtSecret'));
+      const token = jwt.sign(tokenContent, JWT_SECRET);
       return res.json(token);
     })
     .catch(error => console.error(error));
